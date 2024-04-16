@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Upload Music</title>
+    <style>.upload-form {
+        display: flex;
+        flex-direction: column;
+        width: 300px;
+        margin: 50px auto;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        font-family: sans-serif;
+      }
+      
+      .upload-form label {
+        margin-bottom: 10px;
+        font-weight: bold;
+      }
+      
+      .upload-form input[type="file"] {
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        cursor: pointer;
+        transition: all 0.2s ease-in-out;
+      }
+      
+      .upload-form input[type="file"]:hover {
+        background-color: #eee;
+      }
+      
+      .upload-form button {
+        margin-top: 15px;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 3px;
+        background-color: #3498db;
+        color: white;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.2s ease-in-out;
+      }
+      
+      .upload-form button:hover {
+        background-color: #2980b9;
+      }
+      
+      /* Optional animation (replace with your desired animation) */
+      .upload-form.shake {
+        animation: shake 0.5s ease-in-out;
+      }
+      
+      @keyframes shake {
+        0% { transform: translateX(0); }
+        25% { transform: translateX(-5px); }
+        50% { transform: translateX(10px); }
+        75% { transform: translateX(-5px); }
+        100% { transform: translateX(0); }
+      }
+      </style> </head>
+<body>
+  <form action="/uploadMusic" method="post" enctype="multipart/form-data" class="upload-form">
+    <label for="song">Choose Music Files (Multiple allowed):</label>
+    <input type="file" name="song" id="song" multiple>
+    <button type="submit">Upload</button>
+  </form>
+  
+  <script>
+    // Script to add animation on file selection (optional)
+    const fileInput = document.getElementById('song');
+    fileInput.addEventListener('change', function() {
+      this.parentElement.classList.add('shake'); // Add 'shake' class for animation
+      setTimeout(() => {
+        this.parentElement.classList.remove('shake'); // Remove 'shake' class after animation
+      }, 500); // Adjust duration as needed (in milliseconds)
+    });
+  </script>
+</body>
+</html>

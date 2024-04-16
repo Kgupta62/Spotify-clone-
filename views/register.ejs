@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="../stylesheets/style.css">
+</head>
+<style>
+  #main{
+    width: 100%;
+    height: 100%;
+    position: relative;
+    color: white;
+    background-color: rgb(59, 58, 62);
+  }
+  #box{
+    width: 40%;
+    height: 85%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    position: relative;
+    border: 2px solid black;
+    border-radius: 30px;
+    overflow: hidden;
+    /* padding: 50px; */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: black;
+  }
+  #up{
+    width:60% ;
+    /* height: 70%; */
+    position: relative;
+    /* background-color: blanchedalmond; */
+    color: white;
+
+  }
+  #up h3{
+    text-align: center;
+    font-size: 1.9vw;
+  }
+  form{
+    /* margin-top: 30px; */
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  form input{
+    /* width: 100%; */
+    padding: 15px;
+    background-color: transparent;
+    border-radius: 30px;
+    /* outline: 2px solid blue; */
+    border: 1px solid grey;
+    font-size: 1.2vw;
+    color: white;
+  }
+  form input[type=submit]{
+    margin-bottom: 30px;
+    color: rgb(255, 255, 255);
+    background-color:rgb(53, 156, 16);
+    padding: 12px;
+    font-weight: 650;
+    cursor: pointer;
+  }
+  a{
+    color: rgb(53, 156, 16);
+    text-decoration: none;
+  }
+  a:hover{
+    text-decoration: underline;
+    cursor: pointer;
+  }
+  img{
+    width: 250px;
+    position: relative;
+    top: -5vh;
+    left: 50px;
+  }
+  
+
+</style>
+<body>
+  <div id="main">
+    <div id="box">
+      <div id="up">
+        <!-- <h3>𝐒𝐢𝐠𝐧 𝐮𝐩 𝐭𝐨 spotify</h3> -->
+        <img src="../images/spotify-logo.jpg" alt="">
+        <form action="/register" method="post">
+          <input type="text" name="username" placeholder="username">
+          <input type="password" name="password" placeholder="password">
+		  <input type="text" name="contact" placeholder="contact">
+          <input type="text" name="email" placeholder="email">
+          <!-- <input type="text" name="image" placeholder="image url"> -->
+          <input type="submit" value="Sign up">
+        </form>
+        <h4> Already have a account? <a href="/login">Sign in</a> </h4>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
