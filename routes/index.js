@@ -390,6 +390,60 @@ router.post('/forgot', async (req, res) => {
   }
 });
 
+router.get('/profile', isloggedIn, async (req, res) => {
+  try {
+    const profiles = await userModel.findById(req.user._id)
+      // const profiles = await userModel.find({});
+      // console.log(profiles);
+      res.render('profile',profiles);
+  } catch (err) {
+      res.status(500).send(err.message);
+  }
+});
+
+router.get('/updateprofile', isloggedIn, async (req, res) => {
+  try {
+    const profiles = await userModel.findById(req.user._id)
+      // const profiles = await userModel.find({});
+      // console.log(profiles);
+      res.render('updateprofile',profiles);
+  } catch (err) {
+      res.status(500).send(err.message);
+  }
+});
+
+router.post('/updateprofile', isloggedIn, async (req, res) => {
+  try {
+      // Fetch the user's profile data
+      const user = await userModel.findById(req.user._id);
+      if (!user) {
+          return res.status(404).send("User not found");
+      }
+      
+      // Update user data with new values from the form
+      user.username = req.body.username;
+      user.email = req.body.email;
+      user.contact = req.body.contact;
+      // Add other fields as needed
+      
+      // Save the updated user data
+      await user.save();
+
+      // Redirect back to profile page
+      res.redirect('/profile');
+  } catch (err) {
+      res.status(500).send(err.message);
+  }
+});
+
+
+router.get('/contact', (req, res) => {
+  res.render('contact');
+});
+router.get('/about', (req, res) => {
+  res.render('about');
+});
+
 
 
 module.exports = router;

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #1a1a1a;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #333;
+            border-radius: 10px;
+            box-shadow: 0px 0px 20px rgba(255, 255, 255, 0.1);
+            animation: slideIn 0.5s ease-out;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #fff;
+        }
+
+        p {
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        a {
+            color: #4CAF50;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        a:hover {
+            color: #45a049;
+        }
+
+        /* Button Style */
+        .btn {
+            background-color: #4CAF50;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s, color 0.3s; /* Added color transition */
+            text-decoration: none;
+        }
+
+        .btn:hover {
+            background-color: #45a049;
+            transform: scale(1.05);
+            color: #fff; /* Changed text color on hover */
+        }
+
+        /* Animation */
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>About Us</h1>
+        <p>This is our Spotify-like app. Here you can play song, make a playlist, add a liked song and many more things.</p>
+        <p>Thank you for choosing us.</p>
+        <p>
+            <strong>Name:</strong> Kuber Gupta<br>
+            <strong>Portfolio:</strong> <a href="#">my_portfolio</a><br>
+            <strong>GitHub:</strong> <a href="https://github.com/kubergupta">kubergupta</a><br>
+            <strong>LinkedIn:</strong> <a href="https://www.linkedin.com/in/kubergupta/">kubergupta</a> <br>
+            <strong>Contact:</strong> 6264254471
+        </p>
+        <!-- Modern Button -->
+        <a href="/" class="btn">Go back</a>
+    </div>
+</body>
+</html>

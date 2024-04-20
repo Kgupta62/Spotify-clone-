@@ -74,6 +74,7 @@ body {
 .right .musics {
   width: 100%;
   display: grid;
+  margin-top: -45vh;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
 }
 
@@ -234,4 +235,29 @@ display: grid;
 }
 #likedsongheart i{
   color: red;
+}
+
+
+.navbar {
+  width: 100%;
+  overflow: hidden;
+  background-color:#252525;
+  display: flex;
+}
+
+/* Links inside the navigation bar */
+.navbar a {
+  float: left;
+  display: block;
+  color: #f2f2f2;
+  margin-left: 15vh;
+  text-align: center;
+  padding: 14px 20px;
+  text-decoration: none;
+}
+
+/* Change color on hover */
+.navbar a:hover {
+  background-color: #ddd;
+  color: black;
 }
