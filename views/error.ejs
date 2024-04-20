@@ -1,3 +1,43 @@
-<h1><%= message %></h1>
-<h2><%= error.status %></h2>
-<pre><%= error.stack %></pre>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        h1 {
+            color: #dc3545;
+        }
+        h2 {
+            color: #dc3545;
+        }
+        pre {
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Oops! Something went wrong.</h1>
+        <p>We're sorry, but an error occurred while processing your request.</p>
+        <h2>Error Code: <%= error.status || 'Unknown' %></h2>
+        <p>Please try again later or contact support if the problem persists.</p>
+        <% if (error.stack) { %>
+            <h2>Error Details:</h2>
+            <pre><%= error.stack %></pre>
+        <% } %>
+    </div>
+</body>
+</html>
