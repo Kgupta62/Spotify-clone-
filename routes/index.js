@@ -1,99 +1,146 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
 const passport = require('passport');
-const users = require('../models/usermodel')
-const songModel = require('../models/songmodel')
-const playlistModel = require('../models/playlistmodel')
-const mongoose = require('mongoose')
-const multer = require('multer')
-var id3 = require('node-id3')
-const {Readable} = require('stream')
-const crypto = require('crypto')
-var userModel = require('../models/usermodel');
+const users = require('../models/usermodel');
+const songModel = require('../models/songmodel');
+const playlistModel = require('../models/playlistmodel');
+const mongoose = require('mongoose');
+const multer = require('multer');
+const id3 = require('node-id3');
+const { Readable } = require('stream');
+const crypto = require('crypto');
+const userModel = require('../models/usermodel');
 const path = require('path');
 const nodemailer = require('nodemailer');
-const bodyParser = require('body-parser');
 
-
+// Database connection
 const DB = 'mongodb+srv://Kuber:Kuber8821@cluster0.imtvjd4.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
-mongoose.connect(DB).then(() => {
-    console.log('connection successful');
-}).catch((err) => console.log(err));
+mongoose.connect(DB)
+    .then(() => console.log('Connection successful'))
+    .catch((err) => console.log('Connection error:', err));
 
-const localStrategy = require("passport-local")
-passport.use(new localStrategy(users.authenticate()))
+// Passport local strategy
+const localStrategy = require("passport-local");
+passport.use(new localStrategy(users.authenticate()));
 
+// Middleware to check if user is logged in
+function isloggedIn(req, res, next) {
+    if (req.isAuthenticated()) {
+        return next();
+    } else {
+        res.redirect('/auth');
+    }
+}
+
+// Error handling middleware
+router.use((err, req, res, next) => {
+  console.error('Error occurred:', err);
+  res.status(500).send('Server Error');
+});
 
 /* GET home page. */
-router.get('/',isloggedIn,async function(req, res, next) {
-  const currentUser = await userModel.findOne({
-    _id: req.user._id,
+router.get('/', isloggedIn, async function (req, res, next) {
+  try {
+    // Populate the current user with playlists and songs
+    const currentUser = await userModel.findOne({ _id: req.user._id })
+      .populate({
+        path: 'playlist',
+        populate: { path: 'songs', model: 'song' }
+      });
 
-  }).populate('playlist').populate({
-    path:'playlist',
-    populate:{
-      path: 'songs',
-      model: 'song'
-    }
-  })
-  const playlists = currentUser.playlist.filter(playlist => playlist.owner.equals(currentUser._id))
-  res.render('index', {currentUser,playlists});
+    // Fetch all songs from the database
+    const allSongs = await songModel.find();
+    const playlists = currentUser.playlist.filter(playlist => playlist.owner.equals(currentUser._id));
+    // Render the index page with currentUser, all songs, and other relevant data
+    res.render('index', { currentUser,playlists, allSongs });
+  } catch (error) {
+    console.error('Error fetching user data:', error);
+    res.status(500).send('Server Error');
+  }
 });
 
-router.get('/auth', function(req,res,next){
-  res.render('register')
-})
 
-// user authentication-------------------
-router.post('/register', async function(req,res,next){
 
-  var newUser = {
-    username: req.body.username,
-    email: req.body.email,
-    contact: req.body.contact
+// Registration route
+router.get('/auth', function (req, res, next) {
+    res.render('register');
+});
+
+router.post('/register', async (req, res, next) => {
+  try {
+      const newUser = {
+          username: req.body.username,
+          email: req.body.email,
+          contact: req.body.contact
+      };
+
+      // Check if the user already exists
+      const existingUser = await userModel.findOne({ username: newUser.username });
+      if (existingUser) {
+          return res.render('register', { message: 'User already exists. Please login.' });
+      }
+
+      // Register the new user
+      users.register(newUser, req.body.password, async (err, user) => {
+          if (err) {
+              console.error('Error registering user:', err);
+              return res.render('register', { message: 'Error registering user' });
+          }
+
+          passport.authenticate('local')(req, res, async () => {
+              const songs = await songModel.find();
+              const defaultPlaylist = await playlistModel.create({
+                  name: 'default',
+                  owner: req.user._id,
+                  songs: songs.map(song => song._id)
+              });
+              const updatedUser = await userModel.findOneAndUpdate(
+                  { _id: req.user._id },
+                  { $push: { playlist: defaultPlaylist._id } },
+                  { new: true }
+              );
+              res.redirect('/');
+          });
+      });
+  } catch (error) {
+      console.error('Error registering user:', error);
+      res.render('register', { message: 'Error registering user' });
   }
-  users.register(newUser, req.body.password)
-  .then(function(u){
-    passport.authenticate('local')(req,res,async function(){
+});
 
-      const songs = await songModel.find()
-      const defaultplaylist = await playlistModel.create({
-        name: 'default',
-        owner: req.user._id,
-        songs: songs.map(song => song._id)
-      })
-      const newUser = await userModel.findOne({
-        _id: req.user._id
-      })
-      newUser.playlist.push(defaultplaylist._id)
-      await newUser.save()
-      res.redirect('/')
-    })
-  })
-  .catch(function(e){
-    res.send(e)
-  })
-})
-
-router.post('/login',passport.authenticate('local', {
-  successRedirect: '/',
-  failureRedirect: '/login',
-}),
-(req, res, next) => { }
-);
+router.post('/login', (req, res, next) => {
+  passport.authenticate('local', (err, user, info) => {
+      if (err) {
+          console.error('Error during authentication:', err);
+          return res.status(500).send('Server Error');
+      }
+      if (!user) {
+          // Authentication failed
+          return res.render('login', { message});
+      }
+      req.logIn(user, (err) => {
+          if (err) {
+              console.error('Error during login:', err);
+              return res.status(500).send('Server Error');
+          }
+          // Authentication successful
+          return res.redirect('/');
+      });
+  })(req, res, next);
+});
 
 
+// Logout route
 router.get('/logout', (req, res, next) => {
-  if (req.isAuthenticated())
-    req.logout((err) => {
-      if (err) res.send(err);
-      else res.redirect('/auth');
-    });
-  else {
-    res.redirect('/auth');
-  }
+    if (req.isAuthenticated()) {
+        req.logout((err) => {
+            if (err) res.send(err);
+            else res.redirect('/auth');
+        });
+    } else {
+        res.redirect('/auth');
+    }
 });
-
 
 function isloggedIn(req, res, next) {
   if (req.isAuthenticated()) {
@@ -196,9 +243,6 @@ router.post('/uploadMusic', isloggedIn, isAdmin, upload.array('song'), async fun
   }
 });
 
-
-
-
 router.get('/uploadMusic',isloggedIn,isAdmin, function(req,res,next){
   res.render('uploadMusic')
 })
@@ -212,7 +256,7 @@ router.get('/stream/:musicName', async (req, res, next) => {
   const currentSong = await songModel.findOne({
     filename: req.params.musicName
   })
-  console.log(currentSong)
+  // console.log(currentSong)
   const stream = gfsBucket.openDownloadStreamByName(req.params.musicName)
   res.set('Content-Type', 'audio/mpeg')
   res.set('Content-Length', currentSong.size + 1)
@@ -263,16 +307,27 @@ router.post('/like/:songId', isloggedIn ,async function(req,res,next){
   }
 })
 
+router.get('/likedsong', isloggedIn, async function(req, res, next) {
+  try {
+    const currentUser = await users.findById(req.user._id).populate('liked');
+    if (!currentUser) {
+      // User not found
+      return res.status(404).render('error', { message: 'User not found' });
+    }
 
-router.get('/likedsong',isloggedIn,async function(req,res,next){
-  try{
-    const currentUser = await users.findById(req.user._id).populate('liked')
-    res.render('likedsong',{likedsong: currentUser.liked , currentUser})
+    // Check if liked songs exist
+    if (!currentUser.liked || currentUser.liked.length === 0) {
+      return res.render('likedsong', { likedsong: [], currentUser }); // Pass an empty array for likedsong
+    }
+
+    res.render('likedsong', { likedsong: currentUser.liked, currentUser });
+  } catch (err) {
+    console.error(err);
+    res.status(500).render('error', { message: 'Internal Server Error' });
   }
-  catch(err){
-    console.error(err)
-  }
-})
+});
+
+
 
 router.post('/createplaylist', isloggedIn , async(req,res,next)=>{
   try{
@@ -293,10 +348,12 @@ router.post('/createplaylist', isloggedIn , async(req,res,next)=>{
 })
 
 router.get('/playlist/:playlistId',isloggedIn, async(req,res,next)=>{
+  
   try{
-    const{playlistId} = req.params
-    const playlist = await playlistModel.findById(playlistId).populate('songs')
-    res.render('playlist' , {playlist})
+    const{playlistId} = req.params;
+    // console.log("kuber");
+    const playlist = await playlistModel.findById(playlistId).populate('songs');
+    res.render('playlist' , {playlist});
   }catch(err){
     console.error(err)
     res.status(500).send("error")
@@ -304,18 +361,40 @@ router.get('/playlist/:playlistId',isloggedIn, async(req,res,next)=>{
 })
 
 
-router.post('/playlist/:playlistId/addsong/:songId', isloggedIn,async function(req,res,next){
-  try{
-    const{playlistId, songId} = req.params
-    const playlist = await playlistModel.findById(playlistId)
-    playlist.songs.push(songId)
-    await playlist.save()
-    res.redirect(`/playlist/${playlistId}`)
-  }catch(err){
-    console.error(err)
-    res.status(500).send("error received by adding song in playlst...!")
+router.post('/playlist/:playlistId/addsong/:songId', isloggedIn, async function(req, res, next) {
+  try {
+    const { playlistId, songId } = req.params;
+
+    // Check if the playlist with the given ID exists
+    const playlist = await playlistModel.findById(playlistId);
+    if (!playlist) {
+      return res.status(404).send("Playlist not found");
+    }
+
+    // Check if the song with the given ID exists
+    const song = await songModel.findById(songId);
+    if (!song) {
+      return res.status(404).send("Song not found");
+    }
+
+    // Check if the song already exists in the playlist
+    if (playlist.songs.includes(songId)) {
+      return res.status(400).send("Song already exists in the playlist");
+    }
+
+    // Add the song to the playlist and save
+    playlist.songs.push(songId);
+    await playlist.save();
+
+    // Redirect to the playlist page
+    res.redirect(`/playlist/${playlistId}`);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error occurred while adding song to playlist");
   }
-})
+});
+
+
 
 router.post('/playlist/:playlistId/removesong/:songId', isloggedIn,async function(req,res,next){
   try{

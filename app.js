@@ -51,7 +51,7 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-const port = 3000;
+const port = 5173;
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });

@@ -7,7 +7,270 @@
     <link href='https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css' rel='stylesheet'>
     <link rel="stylesheet" href="/stylesheets/style.css">
 </head>
+<style>
+  
 
+* {
+  margin: 0%;
+  padding: 0%;
+  box-sizing: border-box;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  color: white;
+}
+
+html,
+body {
+  height: 100%;
+  width: 100%;
+  background-color: #000000;
+}
+
+#main {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  gap: 10px;
+  background-color: #000000;
+  position: relative;
+}
+
+.left {
+  height: 100%;
+  width: 20%;
+  background-color: #222;
+  position: fixed;
+  z-index: 999;
+}
+
+.left button,
+.left a {
+  font-size: 32px;
+  color: #fff;
+  background-color: transparent;
+  outline: none;
+  border: none;
+  width: 100%;
+  display: flex;
+  padding: 20px;
+  gap: 25px;
+  cursor: pointer;
+  align-items: center;
+  text-decoration: none;
+}
+
+.left button:hover,
+.left a:hover {
+  background-color: #333;
+}
+
+.left button p,
+.left a p {
+  font-size: 18px;
+}
+
+.right {
+  width: 80%;
+  height: 100%;
+  background-color: #121212;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0;
+  position: relative;
+  align-items: flex-start;
+  left: 20%;
+
+}
+
+.right .musics {
+  width: 100%;
+  display: grid;
+  margin-top: 0vh;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+}
+
+.song {
+  background-color: #252525;
+  width: fit-content;
+  align-self: flex-start;
+  padding: 7px;
+  border-radius: 7px;
+  margin: 7px;
+  position: relative;
+  height: fit-content;
+
+}
+
+.song .text h5,
+.song .text p {
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.song img {
+  width: 100%;
+  /* height: 150px;
+  width: 150px; */
+  object-fit: cover;
+}
+
+.song .playButton {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  top: 60%;
+  left: 80%;
+  font-size: 50px;
+  cursor: pointer;
+  display: none;
+}
+
+.song .playButton i {
+  color: green;
+  background-color: black;
+   border-radius: 50%; 
+   border: none;
+  
+}
+.song:hover .playButton{
+  display: block;
+}
+
+audio {
+  position: fixed;
+  bottom: 0px;
+  transform: translate(-50%, -50%);
+  left: 60%;
+  width: 50%;
+  /* background-color: black; */
+}
+audio::-webkit-media-controls-play-button,
+     audio::-webkit-media-controls-panel {
+     background-color: #1c9328;
+     color: #ffffff;
+}
+
+#searchsongname input {
+  padding: 10px;
+  color: black;
+  font-size: 1vw;
+  /* background-color: yellow; */
+}
+
+#searchsongname{
+  /* display: none; */
+  width: 100%;
+  border-radius: 20px;
+  /* background-color: red; */
+  left: 5%;
+  position: relative;
+
+}
+
+#logout{
+  position: absolute;
+  bottom: 20px;
+}
+
+#playlistcreate{
+  display: none;
+}
+
+#subnone{
+  display: none;
+}
+
+#likedbut{
+  cursor: pointer;
+  background-color: transparent;
+  border: none;
+  outline: none;
+  padding: 10px;
+}
+#likedbut i{
+  font-size:1.2vw;
+}
+
+
+#playlistcreate{
+  /* display: none; */
+  width: 100%;
+  border-radius: 20px;
+  /* background-color: red; */
+  left: 5%;
+  position: relative;
+  /* padding: 10px; */
+
+}
+#playlistcreate input{
+  padding: 10px;
+  color: black;
+  font-size: 1vw;
+}
+.play a{
+  /* min-height: 10vh; */
+  /* background-color: red; */
+  width: 100%;
+  font-size: 1.2vw;
+  padding: 12px 20px 12px 50px;
+}
+#addbut button{
+  color: black;
+  padding: 5px;
+}
+
+#remove button{
+  color: black;
+  padding: 5px;
+}
+
+#recent{
+  width: 100%;
+  height: 100px;
+  overflow-x: hidden;
+  /* white-space:inherit; */
+  /* background-color: red; */
+  display: flex;
+  gap: 10px;
+  padding: 0px 0px 0px 10px;
+}
+
+.inbox{
+  display: flex;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+display: grid;
+}
+.inbox h2{
+  font-size: 1vw;
+}
+#likedsongheart i{
+  color: red;
+}
+
+
+.navbar {
+  width: 100%;
+  overflow: hidden;
+  background-color:#252525;
+  display: flex;
+}
+
+/* Links inside the navigation bar */
+.navbar a {
+  float: left;
+  display: block;
+  color: #f2f2f2;
+  margin-left: 15vh;
+  text-align: center;
+  padding: 14px 20px;
+  text-decoration: none;
+}
+
+/* Change color on hover */
+.navbar a:hover {
+  background-color: #ddd;
+  color: black;
+}
 </style>
 <body>
   <div id="main">
@@ -41,73 +304,68 @@
 
     <!-- <h1>search</h1> -->
 
-
     <div class="right">
-        <div class="musics">
-            <% likedsong.forEach(song=>{ %>
-            <div class="song">
-              <img src="/poster/<%= song.poster %>" alt="">
-              <div class="text">
-                <h5><%= song.title %></h5>
-                <!-- <p><%= song.artist %></p> -->
-                <p> <%= song.album %></p>
-                <form action="/like/<%= song._id %>" method="post">
-                  <button id="likedbut">
-                    <% if(currentUser.liked.includes(song._id.toString())){ %>
-              
-                      <i style="color:white;" class="ri-heart-3-fill"></i>
-              
-                    <% }else{ %>
-    
-                      <i style="color: red;" class="ri-heart-3-fill"></i>
-                    <% } %>
-                  </button>
-                 </form>
-              </div>
-              <div class="playButton" onclick="songCardClicked('<%= song.filename %>')">
-                <i class="ri-play-circle-fill"></i>
-              </div>
-            </div>
+      <!-- Right content section -->
+      <div class="musics">
+        <!-- Liked songs -->
+        <% if(likedsong && likedsong.length > 0) { %>
+            <% likedsong.forEach(song => { %>
+                <div class="song">
+                    <img src="/poster/<%= song.poster %>" alt="Song Poster">
+                    <div class="text">
+                        <h5><%= song.title %></h5>
+                        <p><%= song.album %></p>
+                        <form action="/like/<%= song._id %>" method="post">
+                            <button id="likeButton">
+                                <% if(currentUser.liked.includes(song._id.toString())) { %>
+                                    <i class="ri-heart-3-fill liked"></i>
+                                <% } else { %>
+                                    <i class="ri-heart-3-fill not-liked"></i>
+                                <% } %>
+                            </button>
+                        </form>
+                    </div>
+                    <div class="playButton" onclick="playSong('<%= song.filename %>')">
+                        <i class="ri-play-circle-fill"></i>
+                    </div>
+                </div>
             <% }) %>
-          </div>
+        <% } else { %>
+            <div style="position:absolute;top:40vh; left:30vw;" id="no-songs">
+                <p>You haven't liked any songs yet.</p>
+            </div>
+        <% } %>
+    </div>
+    
+      </div>
 
+      <!-- Audio player -->
       <audio src="/stream/" controls></audio>
+
+      <!-- Message when no liked songs -->
       
     </div>
+  </div>
+
+  <!-- External JavaScript library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.0/axios.min.js" integrity="sha512-WrdC3CE9vf1nBf58JHepuWT4x24uTacky9fuzw2g/3L9JkihgwZ6Cfv+JGTtNyosOhEmttMtEZ6H3qJWfI7gIQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   
-    <!-- <audio src="/stream/69b554779eb6502777e310ed0d0c41ff4ea78e35" controls></audio> -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.0/axios.min.js" integrity="sha512-WrdC3CE9vf1nBf58JHepuWT4x24uTacky9fuzw2g/3L9JkihgwZ6Cfv+JGTtNyosOhEmttMtEZ6H3qJWfI7gIQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script>
-        async function searchSong(e){
-          e.preventDefault()
-          const result = await axios.post('/search',{
-            search: document.querySelector('input').value
-        })
-console.log(document.querySelector('input').value)
-        let clutter = ''
-        result.data.songs.forEach(song => {
-        clutter += ` <div class="song" onclick="songCardClicked('${song.filename}')">
-          <img src="/poster/${song.poster}" alt="">
-          <div class="text">
-            <h5>${song.title}</h5>
-            <p>${song.artist}</p>
-            <p>${song.album}</p>
-          </div>
+  <script>
+    // JavaScript code to handle displaying the message when no liked songs
+    window.addEventListener('DOMContentLoaded', (event) => {
+      const likedSongs = document.querySelectorAll('.song');
+      const noSongsMessage = document.getElementById('no-songs');
 
-          <div class="playButton">
-            <i class="ri-play-circle-fill"></i>
-          </div>
-        </div>`
-            
-        });
-        document.querySelector('.musics').innerHTML = clutter
-        }
+      if (likedSongs.length === 0) {
+        noSongsMessage.style.display = 'block';
+      }
+    });
 
-        function songCardClicked(filename) {
-      document.querySelector('audio').setAttribute('src', `/stream/${filename}`)
-      document.querySelector('audio').play()
+    // JavaScript function to handle playing songs
+    function songCardClicked(filename) {
+      document.querySelector('audio').setAttribute('src', `/stream/${filename}`);
+      document.querySelector('audio').play();
     }
-
-    </script>
+  </script>
 </body>
 </html>

@@ -59,10 +59,6 @@
 
       </div>
 
-
-
-
-    
       <a href="/logout" id="logout">
         <i class="ri-logout-box-line"></i>
         <p>logout</p>
@@ -78,50 +74,110 @@
         <a href="/logout">Logout</a>
       </div>
       <div class="musics">
-        <% currentUser.playlist[0].songs.forEach(song=>{ %>
-        <div class="song" onclick="songCardClicked('<%= song.filename %>' , '<%= song.title %>','<%= song.album %>','<%= song.artist %>' ,'<%= song.poster %>')">
-          <img src="/poster/<%= song.poster %>" alt="">
-          <div class="text">
-            <h5><%= song.title %></h5>
-            <!-- <p><%= song.artist %></p> -->
-            <p> <%= song.album %></p>
-            <form action="/like/<%= song._id %>" method="post">
-              <button id="likedbut">
-                <% if(currentUser.liked.includes(song._id.toString())){ %>
-          
-                  <i style="color: red;" class="ri-heart-3-fill"></i>
-          
-                <% }else{ %>
-
-                  <i style="color: white;" class="ri-heart-3-fill"></i>
-                <% } %>
-              </button>
-             </form>
+        <!-- Iterate through all songs -->
+        <% allSongs.forEach(song => { %>
+          <div class="song" onclick="songCardClicked('<%= song.filename %>', '<%= song.title %>', '<%= song.album %>', '<%= song.artist %>', '<%= song.poster %>')">
+            <img src="/poster/<%= song.poster %>" alt="">
+            <div class="text">
+              <h5><%= song.title %></h5>
+              <p><%= song.artist %></p>
+              <p><%= song.album %></p>
+              <form action="/like/<%= song._id %>" method="post">
+                <button id="likedbut">
+                  <% if(currentUser.liked.includes(song._id.toString())) { %>
+                    <i style="color: red;" class="ri-heart-3-fill"></i>
+                  <% } else { %>
+                    <i style="color: white;" class="ri-heart-3-fill"></i>
+                  <% } %>
+                </button>
+                <button class="addToPlaylistButton" onclick="showAddToPlaylist('<%= song._id %>', event)">
+                  <i class="ri-add-circle-line"></i> Add to Playlist
+                </button>
+                
+              </form>
+            </div>
+            <div class="playButton">
+              <i class="ri-play-circle-fill"></i>
+            </div>
           </div>
-          <div class="playButton">
-            <i class="ri-play-circle-fill"></i>
-          </div>
-        </div>
         <% }) %>
       </div>
+      
+      
 
       <audio src="/stream/" controls></audio>
     </div>
   </div>
+
+
+<!-- Modal for adding song to playlist -->
+<div id="addToPlaylistModal" style="display: none;background: #000;">
+  <div class="modal-content">
+    <h2>Select Playlist</h2>
+    <ul>
+      <% if (Array.isArray(playlists) && playlists.length > 0) { %>
+        <% playlists.forEach(playlist => { %>
+        <li>
+          <a href="#" onclick="addSongToPlaylist('<%= playlist._id %>')">
+            <%= playlist.name %>
+          </a>
+        </li>
+        <% }) %>
+      <% } else { %>
+        <li>No playlists available</li>
+      <% } %>
+    </ul>
+    <button id="model-button" onclick="closeAddToPlaylistModal()">Close</button>
+  </div>
+</div>
+
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script>
-    function songCardClicked(filename , title,album,artist,poster) {
-      document.querySelector('audio').setAttribute('src', `/stream/${filename}`)
-      document.querySelector('audio').play()
+function showAddToPlaylist(songId, event) {
+  event.preventDefault();
+  selectedSongId = songId;
+  document.getElementById('addToPlaylistModal').style.display = 'block';
+}
 
+function closeAddToPlaylistModal() {
+  document.getElementById('addToPlaylistModal').style.display = 'none';
+}
 
-      const songplay = document.getElementById('recent')
-      songplay.innerHTML = `<img src ="/poster/${poster}">
-      <div class="inbox">
+function addSongToPlaylist(playlistId) {
+  if (!selectedSongId) {
+    console.error('No song selected to add to playlist');
+    return;
+  }
+
+  fetch(`/playlist/${playlistId}/addsong/${selectedSongId}`, {
+    method: 'POST',
+  })
+  .then(response => {
+    if (response.ok) {
+      alert('Song added successfully');
+      window.location.reload();
+    } else {
+      throw new Error('Failed to add song to playlist');
+    }
+  })
+  .catch(error => {
+    console.error('Error adding song to playlist:', error);
+    alert('Failed to add song to playlist');
+  });
+}
+
+function songCardClicked(filename, title, album, artist, poster) {
+  document.querySelector('audio').setAttribute('src', `/stream/${filename}`);
+  document.querySelector('audio').play();
+
+  const songplay = document.getElementById('recent');
+  songplay.innerHTML = `<img src="/poster/${poster}">
+    <div class="inbox">
       <h2>TITLE: ${title}</h2>
       <h2>ARTIST: ${artist}</h2>
-      </div>`
-    }
+    </div>`;
+}
 
 
 

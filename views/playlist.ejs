@@ -5,10 +5,306 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link href='https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css' rel='stylesheet'>
-    <link rel="stylesheet" href="/stylesheets/style.css">
+    
 </head>
 
+<style>
+* {
+  margin: 0%;
+  padding: 0%;
+  box-sizing: border-box;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  color: white;
+}
+
+html,
+body {
+  height: 100%;
+  width: 100%;
+  background-color: #000000;
+}
+
+#main {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  gap: 10px;
+  background-color: #000000;
+  position: relative;
+}
+
+.left {
+  height: 100%;
+  width: 20%;
+  background-color: #222;
+  position: fixed;
+  z-index: 999;
+}
+
+.left button,
+.left a {
+  font-size: 32px;
+  color: #fff;
+  background-color: transparent;
+  outline: none;
+  border: none;
+  width: 100%;
+  display: flex;
+  padding: 20px;
+  gap: 25px;
+  cursor: pointer;
+  align-items: center;
+  text-decoration: none;
+}
+
+.left button:hover,
+.left a:hover {
+  background-color: #333;
+}
+
+.left button p,
+.left a p {
+  font-size: 18px;
+}
+
+.right {
+  width: 80%;
+  height: 100%;
+  background-color: #121212;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0;
+  position: relative;
+  align-items: flex-start;
+  left: 20%;
+
+}
+button:hover {
+    background-color: #c0392b;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+
+.right .musics {
+  width: 100%;
+  display: grid;
+  margin-top: 0vh;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+}
+
+.song {
+  background-color: #252525;
+  width: fit-content;
+  align-self: flex-start;
+  padding: 7px;
+  border-radius: 7px;
+  margin: 7px;
+  position: relative;
+  height: fit-content;
+
+}
+
+.song .text h5,
+.song .text p {
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.song img {
+  width: 100%;
+  /* height: 150px;
+  width: 150px; */
+  object-fit: cover;
+}
+
+.song .playButton {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  top: 60%;
+  left: 80%;
+  font-size: 50px;
+  cursor: pointer;
+  display: none;
+}
+
+.song .playButton i {
+  color: green;
+  background-color: black;
+   border-radius: 50%; 
+   border: none;
+  
+}
+.song:hover .playButton{
+  display: block;
+}
+
+audio {
+  position: fixed;
+  bottom: 0px;
+  transform: translate(-50%, -50%);
+  left: 60%;
+  width: 50%;
+  /* background-color: black; */
+}
+audio::-webkit-media-controls-play-button,
+     audio::-webkit-media-controls-panel {
+     background-color: #1c9328;
+     color: #ffffff;
+}
+
+#searchsongname input {
+  padding: 10px;
+  color: black;
+  font-size: 1vw;
+  /* background-color: yellow; */
+}
+
+#searchsongname{
+  /* display: none; */
+  width: 100%;
+  border-radius: 20px;
+  /* background-color: red; */
+  left: 5%;
+  position: relative;
+
+}
+
+#logout{
+  position: absolute;
+  bottom: 20px;
+}
+
+#playlistcreate{
+  display: none;
+}
+
+#subnone{
+  display: none;
+}
+
+#likedbut{
+  cursor: pointer;
+  background-color: transparent;
+  border: none;
+  outline: none;
+  padding: 10px;
+}
+#likedbut i{
+  font-size:1.2vw;
+}
+
+
+#playlistcreate{
+  /* display: none; */
+  width: 100%;
+  border-radius: 20px;
+  /* background-color: red; */
+  left: 5%;
+  position: relative;
+  /* padding: 10px; */
+
+}
+#playlistcreate input{
+  padding: 10px;
+  color: black;
+  font-size: 1vw;
+}
+.play a{
+  /* min-height: 10vh; */
+  /* background-color: red; */
+  width: 100%;
+  font-size: 1.2vw;
+  padding: 12px 20px 12px 50px;
+}
+#addbut button{
+  color: black;
+  padding: 5px;
+}
+
+#remove button{
+  color: black;
+  padding: 5px;
+}
+
+#recent{
+  width: 100%;
+  height: 100px;
+  overflow-x: hidden;
+  /* white-space:inherit; */
+  /* background-color: red; */
+  display: flex;
+  gap: 10px;
+  padding: 0px 0px 0px 10px;
+}
+
+.inbox{
+  display: flex;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+display: grid;
+}
+.inbox h2{
+  font-size: 1vw;
+}
+#likedsongheart i{
+  color: red;
+}
+
+
+.navbar {
+  width: 100%;
+  overflow: hidden;
+  background-color:#252525;
+  display: flex;
+}
+
+/* Links inside the navigation bar */
+.navbar a {
+  float: left;
+  display: block;
+  color: #f2f2f2;
+  margin-left: 15vh;
+  text-align: center;
+  padding: 14px 20px;
+  text-decoration: none;
+}
+
+/* Change color on hover */
+.navbar a:hover {
+  background-color: #ddd;
+  color: black;
+}
+
+
+
+#addToPlaylistModal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  padding: 20px;
+  border: 1px solid #ccc;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+.modal-content {
+  text-align: center;
+}
+.modal-content ul {
+  list-style: none;
+  padding: 0;
+}
+.modal-content ul li {
+  margin: 10px 0;
+}
+.modal-content ul li a {
+  text-decoration: none;
+  color: #333;
+}
 </style>
+
 <body>
   <div id="main">
     <div class="left">
@@ -18,25 +314,21 @@
         <i class="ri-home-5-fill"></i>
         <p>Home</p>
       </a>
-      <a id="linksearch" href="">
+      <!-- <a id="linksearch" href="/search">
         <i class="ri-search-line"></i>
         <p>Search</p>
-      </a>
-      <!-- <input type="text" placeholder="search">
-      <button onclick="searchSong()">search</button> -->
-
-   
-
-      <button id="newplaylist">
+      </a> -->
+     
+      <!-- <button id="newplaylist">
         <i class="ri-play-list-fill"></i>
         <p>playlist</p>
-    </button>
+    </button> -->
 
 
-    <form id="searchsongname" onsubmit="searchSong(event)" >
+    <!-- <form id="searchsongname" onsubmit="searchSong(event)" >
         <input type="text" name="search" placeholder="search">
         <button id="subnone" type="submit">submit</button>
-      </form>
+      </form> -->
 
 
     <a id="likedsongheart" href="/likedsong">
@@ -55,25 +347,29 @@
 
 
     <div class="right">
-        <div class="musics">
-            <% playlist.songs.forEach(song=>{ %>
-            <div class="song">
-              <img src="/poster/<%= song.poster %>" alt="">
-              <div class="text">
-                <h5><%= song.title %></h5>
-                <p><%= song.artist %></p>
-                <!-- <p> <%= song.album %></p> -->
-                <form id="remove" action="/playlist/<%= playlist._id %>/removesong/<%= song._id %>" method="post">
-                  <button>remove </button>
-                </form>
-                
-              </div>
-              <div class="playButton" onclick="songCardClicked('<%= song.filename %>')">
-                <i class="ri-play-circle-fill"></i>
-              </div>
-            </div>
+      <div class="musics">
+        <% if (playlist.songs.length === 0) { %>
+            <h3 style="position:absolute;top:35vh;left:30vw;color:#555; ">No songs are their.</h3>
+        <% } else { %>
+            <% playlist.songs.forEach(song => { %>
+                <div class="song">
+                    <img src="/poster/<%= song.poster %>" alt="">
+                    <div class="text">
+                        <h5><%= song.title %></h5>
+                        <p><%= song.artist %></p>
+                        <!-- <p> <%= song.album %></p> -->
+                        <form id="remove" action="/playlist/<%= playlist._id %>/removesong/<%= song._id %>" method="post">
+                            <button style="margin-top: 10px; background-color: #e74c3c; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); transition: all 0.3s ease;">Remove</button>
+                        </form>
+                    </div>
+                    <div class="playButton" onclick="songCardClicked('<%= song.filename %>')">
+                        <i class="ri-play-circle-fill"></i>
+                    </div>
+                </div>
             <% }) %>
-          </div>
+        <% } %>
+    </div>
+    
 
       <audio src="/stream/" controls></audio>
       
