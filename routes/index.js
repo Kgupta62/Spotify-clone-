@@ -34,113 +34,125 @@ function isloggedIn(req, res, next) {
 
 // Error handling middleware
 router.use((err, req, res, next) => {
-  console.error('Error occurred:', err);
-  res.status(500).send('Server Error');
+    console.error('Error occurred:', err);
+    req.session.alert = 'An error occurred. Please try again.';
+    res.redirect('back');
 });
 
 /* GET home page. */
 router.get('/', isloggedIn, async function (req, res, next) {
-  try {
-    // Populate the current user with playlists and songs
-    const currentUser = await userModel.findOne({ _id: req.user._id })
-      .populate({
-        path: 'playlist',
-        populate: { path: 'songs', model: 'song' }
-      });
+    try {
+        // Populate the current user with playlists and songs
+        const currentUser = await userModel.findOne({ _id: req.user._id })
+            .populate({
+                path: 'playlist',
+                populate: { path: 'songs', model: 'song' }
+            });
 
-    // Fetch all songs from the database
-    const allSongs = await songModel.find();
-    const playlists = currentUser.playlist.filter(playlist => playlist.owner.equals(currentUser._id));
-    // Render the index page with currentUser, all songs, and other relevant data
-    res.render('index', { currentUser,playlists, allSongs });
-  } catch (error) {
-    console.error('Error fetching user data:', error);
-    res.status(500).send('Server Error');
-  }
+        // Fetch all songs from the database
+        const allSongs = await songModel.find();
+        const playlists = currentUser.playlist.filter(playlist => playlist.owner.equals(currentUser._id));
+        // Render the index page with currentUser, all songs, and other relevant data
+        res.render('index', { currentUser, playlists, allSongs });
+    } catch (error) {
+        console.error('Error fetching user data:', error);
+        req.session.alert = 'An error occurred while fetching user data. Please try again.';
+        res.redirect('back');
+    }
 });
-
-
 
 // Registration route
 router.get('/auth', function (req, res, next) {
     res.render('register');
 });
 
+router.get('/test-error', (req, res, next) => {
+  next(new Error('This is a test error'));
+});
+
+
 router.post('/register', async (req, res, next) => {
-  try {
-      const newUser = {
-          username: req.body.username,
-          email: req.body.email,
-          contact: req.body.contact
-      };
+    try {
+        const newUser = {
+            username: req.body.username,
+            email: req.body.email,
+            contact: req.body.contact
+        };
 
-      // Check if the user already exists
-      const existingUser = await userModel.findOne({ username: newUser.username });
-      if (existingUser) {
-          return res.render('register', { message: 'User already exists. Please login.' });
-      }
+        // Check if the user already exists
+        const existingUser = await userModel.findOne({ username: newUser.username });
+        if (existingUser) {
+            req.session.alert = 'User already exists. Please login.';
+            return res.redirect('/auth');
+        }
 
-      // Register the new user
-      users.register(newUser, req.body.password, async (err, user) => {
-          if (err) {
-              console.error('Error registering user:', err);
-              return res.render('register', { message: 'Error registering user' });
-          }
+        // Register the new user
+        users.register(newUser, req.body.password, async (err, user) => {
+            if (err) {
+                console.error('Error registering user:', err);
+                req.session.alert = 'Error registering user';
+                return res.redirect('/auth');
+            }
 
-          passport.authenticate('local')(req, res, async () => {
-              const songs = await songModel.find();
-              const defaultPlaylist = await playlistModel.create({
-                  name: 'default',
-                  owner: req.user._id,
-                  songs: songs.map(song => song._id)
-              });
-              const updatedUser = await userModel.findOneAndUpdate(
-                  { _id: req.user._id },
-                  { $push: { playlist: defaultPlaylist._id } },
-                  { new: true }
-              );
-              res.redirect('/');
-          });
-      });
-  } catch (error) {
-      console.error('Error registering user:', error);
-      res.render('register', { message: 'Error registering user' });
-  }
+            passport.authenticate('local')(req, res, async () => {
+                const songs = await songModel.find();
+                const defaultPlaylist = await playlistModel.create({
+                    name: 'default',
+                    owner: req.user._id,
+                    songs: songs.map(song => song._id)
+                });
+                const updatedUser = await userModel.findOneAndUpdate(
+                    { _id: req.user._id },
+                    { $push: { playlist: defaultPlaylist._id } },
+                    { new: true }
+                );
+                res.redirect('/');
+            });
+        });
+    } catch (error) {
+        console.error('Error registering user:', error);
+        req.session.alert = 'Error registering user';
+        res.redirect('/auth');
+    }
 });
 
 router.post('/login', (req, res, next) => {
-  passport.authenticate('local', (err, user, info) => {
-      if (err) {
-          console.error('Error during authentication:', err);
-          return res.status(500).send('Server Error');
-      }
-      if (!user) {
-          // Authentication failed
-          return res.render('login', { message});
-      }
-      req.logIn(user, (err) => {
-          if (err) {
-              console.error('Error during login:', err);
-              return res.status(500).send('Server Error');
-          }
-          // Authentication successful
-          return res.redirect('/');
-      });
-  })(req, res, next);
+    passport.authenticate('local', (err, user, info) => {
+        if (err) {
+            console.error('Error during authentication:', err);
+            req.session.alert = 'An error occurred during login. Please try again.';
+            return res.redirect('/login');
+        }
+        if (!user) {
+            req.session.alert = 'Wrong credentials. Please try again.';
+            return res.redirect('/login');
+        }
+        req.logIn(user, (err) => {
+            if (err) {
+                console.error('Error during login:', err);
+                req.session.alert = 'An error occurred during login. Please try again.';
+                return res.redirect('/login');
+            }
+            return res.redirect('/');
+        });
+    })(req, res, next);
 });
-
 
 // Logout route
 router.get('/logout', (req, res, next) => {
     if (req.isAuthenticated()) {
         req.logout((err) => {
-            if (err) res.send(err);
-            else res.redirect('/auth');
+            if (err) {
+                console.error('Error during logout:', err);
+                req.session.alert = 'An error occurred during logout. Please try again.';
+            }
+            res.redirect('/auth');
         });
     } else {
         res.redirect('/auth');
     }
 });
+
 
 function isloggedIn(req, res, next) {
   if (req.isAuthenticated()) {

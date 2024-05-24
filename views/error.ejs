@@ -8,6 +8,7 @@
         body {
             font-family: Arial, sans-serif;
             padding: 20px;
+            background-color: #f0f0f0;
         }
         .container {
             max-width: 600px;
@@ -15,29 +16,44 @@
             padding: 20px;
             border: 1px solid #ccc;
             border-radius: 5px;
-            background-color: #f9f9f9;
+            background-color: #fff;
+            text-align: center;
         }
         h1 {
-            color: #dc3545;
+            color: #ff5757;
+            font-size: 32px;
         }
-        h2 {
-            color: #dc3545;
+        p {
+            font-size: 18px;
+            margin-bottom: 20px;
         }
-        pre {
-            white-space: pre-wrap;
+        .funny-message {
+            font-size: 24px;
+            color: #666;
+            margin-bottom: 20px;
+        }
+        .go-back-button {
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        .go-back-button:hover {
+            background-color: #0056b3;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Oops! Something went wrong.</h1>
-        <p>We're sorry, but an error occurred while processing your request.</p>
-        <h2>Error Code: <%= error.status || 'Unknown' %></h2>
+        <p>We're sorry, but something unexpected happened.</p>
+        <p class="funny-message">Looks like our server got confused!</p>
         <p>Please try again later or contact support if the problem persists.</p>
-        <% if (error.stack) { %>
-            <h2>Error Details:</h2>
-            <pre><%= error.stack %></pre>
-        <% } %>
+        <button class="go-back-button" onclick="window.location.href = '/';">Go Back</button>
     </div>
 </body>
 </html>
